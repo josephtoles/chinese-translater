@@ -40,7 +40,7 @@ with open(cedict_file_path) as f:
 
         line = line[pinyin_end+1:]
 
-        definition = line
+        definition = line[:len(line)-1] # removes trailing return
         new_word['definition'] = definition
 
         words[simplified] = new_word
