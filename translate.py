@@ -12,7 +12,6 @@ line_count = 0
 words = {}
 
 # Parses dictionary file
-print('starting')
 with open(cedict_file_path) as f:
     for line in f:
         if line.startswith('#'):
@@ -43,9 +42,11 @@ with open(cedict_file_path) as f:
         definition = line[:len(line)-1] # removes trailing return
         new_word['definition'] = definition
 
-        words[simplified] = new_word
+        if simplified in words.keys():
+            words[simplified].append(new_word)
+        else:
+            words[simplified] = [new_word]
 
-print('loaded words')
 
 # Parses known words file
 known_words = set([])
@@ -53,10 +54,10 @@ with open(known_words_file_path) as f:
     for line in f:
         known_words.add(line[:len(line)-1])
 
-print ('loaded known words')
-print ('known words is ' + str(known_words))
 
 #print('words.keys() is ' + str(words.keys()))
+
+vocab = set([])
 
 # handles translation
 for line in sys.stdin:
@@ -71,8 +72,13 @@ for line in sys.stdin:
             if token in words.keys():
                 index += word_length
                 if token not in known_words:
-                    word = words[token]
-                    print(word['simplified'] + ' ' + word['pinyin'] + ' ' + word['definition'])
+                    if token not in vocab:
+                        vocab.add(token)
                 break
             if (word_length == 1):
                 index += 1
+
+for token in vocab:
+    word_list = words[token]
+    for word in word_list:
+        print(word['simplified'] + ' ' + word['pinyin'] + ' ' + word['definition'])
