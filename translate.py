@@ -43,7 +43,8 @@ with open(cedict_file_path) as f:
         new_word['definition'] = definition
 
         if simplified in words.keys():
-            words[simplified].append(new_word)
+            if not definition.startswith(' /variant of '): # imperfect removal
+                words[simplified].append(new_word)
         else:
             words[simplified] = [new_word]
 
